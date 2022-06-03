@@ -1,6 +1,0 @@
-pendulum
-pandas
-numpy
-streamlit
-time
-plotly
