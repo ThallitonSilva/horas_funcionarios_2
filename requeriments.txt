@@ -1,6 +1,6 @@
+pendulum
 pandas
 numpy
 streamlit
 time
-pendulum==2.1.2
 plotly
