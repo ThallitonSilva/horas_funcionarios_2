@@ -75,10 +75,10 @@ if arquivo:
         st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
         try:
-                temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
+                temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana','Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
                 
         except:
-                temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1']]
+                temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1']]
 
         st.write(temp0)
         st.download_button(label='Download da Lista de Horas',
@@ -110,25 +110,23 @@ if arquivo:
 
         try:
 
-            tabela = separa_funcionario(horarios, func, ano, mes)
-            tabela_com_dia = coloca_nome_no_dia(tabela)
-            agrupado = agrupa_dias_trabalhados(tabela_com_dia)
-            horario_organizado = organizar_horario(agrupado)
-            horas_calculadas = calcula_horas(horario_organizado)
-            horas_trabalhadas = horas_trabalhadas_mes(horario_organizado)
-            erros_funcionario = agrupa_erros(horario_organizado)
-
-            mes_atual = tabela["Mes"].unique()[0]
+            tabela1 = separa_funcionario(horarios, func, ano, mes)
+            tabela_com_dia1 = coloca_nome_no_dia(tabela1)
+            agrupado1 = agrupa_dias_trabalhados(tabela_com_dia1)
+            horario_organizado1 = organizar_horario(agrupado1)
+            horas_calculadas1 = calcula_horas(horario_organizado1)
+            horas_trabalhadas1 = horas_trabalhadas_mes(horario_organizado1)
+            erros_funcionario1 = agrupa_erros(horario_organizado1)
 
             st.markdown(f'## O mês selecionado foi {meses[mes]} de {ano}')
 
-            st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
+            st.markdown(f'#### {func} trabalhou {horas_trabalhadas1} neste mês')
 
             try:
-                temp1 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
+                temp1 = horas_calculadas1[['Nome', 'Data', 'Dia_Semana', 'Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
                 
             except:
-                temp1 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1']]
+                temp1 = horas_calculadas1[['Nome', 'Data', 'Dia_Semana', 'Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1']]
 
             st.write(temp1)
             st.download_button(label='Download da Lista de Horas',
@@ -136,10 +134,10 @@ if arquivo:
                                file_name=f'Lista_Horas_{func}_{meses[mes]}.csv')
 
             st.markdown(f'#### A quantidade de horas trabalhadas ao longo do mês')
-            st.plotly_chart(figura_horas_trab(horas_calculadas), use_container_width=True)
+            st.plotly_chart(figura_horas_trab(horas_calculadas1), use_container_width=True)
 
             st.markdown(f'#### A quantidade de erros, ao usar o relógio de ponto, no mês')
-            st.plotly_chart(figura_erros(erros_funcionario), use_container_width=True)
+            st.plotly_chart(figura_erros(erros_funcionario1), use_container_width=True)
 
         except:
             st.markdown(f'## O mês selecionado foi {meses[mes]} de {ano}')
