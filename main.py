@@ -124,7 +124,11 @@ if arquivo:
 
             st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
-            temp1 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
+            try:
+                temp1 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
+                
+            except:
+                temp1 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Aviso', 'Hora_0', 'Hora_1']]
 
             st.write(temp1)
             st.download_button(label='Download da Lista de Horas',
