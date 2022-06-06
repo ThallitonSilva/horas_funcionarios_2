@@ -168,15 +168,17 @@ def calcula_horas(tabela):
 
             else:
               
-              if i.Hora_0.diff(i.Hora_1).in_minutes() < 360:
-                hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
+              hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
+              
+              if hora0.in_minutes() < 360:
+                
                 tabela.loc[index, 'Horas'] = hora0.as_interval()
                 tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval()).total_seconds() / 3600
                 tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval())
                 tabela.loc[index, 'Aviso'] = 'Trabalhou Meio Periodo / Passou somente 2 vezes'
                 
               else:
-                hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
+                
                 tabela.loc[index, 'Horas'] = hora0.as_interval() - almoco
                 tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval() - almoco).total_seconds() / 3600
                 tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval() - almoco)
