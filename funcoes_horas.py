@@ -168,7 +168,7 @@ def calcula_horas(tabela):
 
             else:
               
-              if hora1.diff(hora2).in_minutes() < 360:
+              if i.Hora_0.diff(i.Hora_1).in_minutes() < 360:
                 hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
                 tabela.loc[index, 'Horas'] = hora0.as_interval()
                 tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval()).total_seconds() / 3600
