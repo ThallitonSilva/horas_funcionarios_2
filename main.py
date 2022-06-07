@@ -68,7 +68,7 @@ if arquivo:
         horas_trabalhadas = horas_trabalhadas_mes(horario_organizado)
         erros_funcionario = agrupa_erros(horario_organizado)
 
-        mes = calcula_mes(tabela)
+        mes = calcula_mes(horas_calculadas)
         dias = calcula_dias(mes)
         horas_por_mes = calcula_horas_por_mes(dias)
         
