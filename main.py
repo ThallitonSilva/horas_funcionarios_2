@@ -81,7 +81,7 @@ if arquivo:
         for i, j in dias.items():
           st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
 
-        st.markdown(f'#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês')
+        st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
         st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
         try:
@@ -138,7 +138,7 @@ if arquivo:
             for i, j in dias.items():
               st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
 
-            st.markdown(f'#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês')
+            st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
             st.markdown(f'#### {func} trabalhou {horas_trabalhadas1} neste mês')
 
             try:
