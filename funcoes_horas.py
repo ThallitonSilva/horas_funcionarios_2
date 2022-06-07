@@ -73,7 +73,7 @@ def organizar_horario(tabela):
 
         dtemp['Obs'] = 'Ok'
 
-        dtemp['Vezes'] = qtd_passada
+      dtemp['Vezes'] = qtd_passada
 
       horarios_arrumados = arrumar_horas(dtemp, qtd_passada)
 
