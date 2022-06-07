@@ -55,51 +55,52 @@ def organizar_horario(tabela):
     qtd_passada = 0
 
     for i in dtemp['Data_Hora'].iloc:
+
       dtemp[f'Hora_{qtd_passada}'] = str(i)
 
       qtd_passada += 1
 
-      dtemp.drop_duplicates(subset=['Data'], inplace=True)
+    dtemp.drop_duplicates(subset=['Data'], inplace=True)
 
-      if dtemp['Dia_Semana'].values[0] != 'Sábado' and qtd_passada < 4:
+    if dtemp['Dia_Semana'].values[0] != 'Sábado' and qtd_passada < 4:
 
-        dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
+      dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
 
-      elif dtemp['Dia_Semana'].values[0] == 'Sábado' and qtd_passada > 2:
+    elif dtemp['Dia_Semana'].values[0] == 'Sábado' and qtd_passada > 2:
 
-        dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
+      dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
 
-      else:
+    else:
 
-        dtemp['Obs'] = 'Ok'
+      dtemp['Obs'] = 'Ok'
 
-      dtemp['Vezes'] = qtd_passada
+    dtemp['Vezes'] = qtd_passada
 
-      horarios_arrumados = arrumar_horas(dtemp, qtd_passada)
+    horarios_arrumados = arrumar_horas(dtemp, qtd_passada)
 
-      tab.append(horarios_arrumados)
+    tab.append(horarios_arrumados)
 
-      tabela = pd.concat(tab).reset_index(drop=True)
+    tabela = pd.concat(tab).reset_index(drop=True)
 
-      tabela.fillna('Sem data', inplace=True)
+    tabela.fillna('Sem data', inplace=True)
 
-    try:
-      tabela = tabela[['Nome', 'Data_Hora', 
+  try:
+    tabela = tabela[['Nome', 'Data_Hora', 
                        'Dia_Semana', 'Data', 
                        'Hora', 'Ano', 'Mes', 
                        'Dia', 'Hora_0', 
                        'Hora_1', 'Hora_2',
                        'Hora_3', 'Obs', 'Vezes']]
 
-    except KeyError:
-      tabela = tabela[['Nome', 'Data_Hora', 
+  except KeyError:
+    tabela = tabela[['Nome', 'Data_Hora', 
                        'Dia_Semana', 'Data', 
                        'Hora', 'Ano', 'Mes', 
                        'Dia', 'Hora_0', 
                        'Hora_1', 'Obs', 'Vezes']]
 
-    except:
-      return 'Deu algum erro, fala com o Thalliton'
+  except:
+    return 'Deu algum erro, fala com o Thalliton'
 
   return tabela
 
