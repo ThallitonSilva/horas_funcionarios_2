@@ -76,9 +76,9 @@ if arquivo:
 
   st.markdown(f'#### Neste mês tiveram: \n')
   for i, j in dias.items():
-    st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
+    st.markdown(f'{j} - {i} - Totalizando: {converte_horas(horas_por_mes[i])}\n')
 
-  st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
+  st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} neste mês")
   st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
   try:
@@ -120,8 +120,8 @@ if arquivo:
       horas_trabalhadas1 = horas_trabalhadas_mes(horario_organizado1)
       erros_funcionario1 = agrupa_erros(horario_organizado1)
 
-      mes = calcula_mes(tabela1)
-      dias = calcula_dias(mes)
+      mes1 = calcula_mes(tabela1)
+      dias = calcula_dias(mes1)
       horas_por_mes = calcula_horas_por_mes(dias)
 
       st.markdown(f'## O mês selecionado foi {meses[mes]} de {ano}')
@@ -130,7 +130,7 @@ if arquivo:
       for i, j in dias.items():
         st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
 
-      st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
+      st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} neste mês")
       st.markdown(f'#### {func} trabalhou {horas_trabalhadas1} neste mês')
 
       try:
