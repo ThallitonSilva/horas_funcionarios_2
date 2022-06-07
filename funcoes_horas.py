@@ -129,22 +129,22 @@ def arrumar_horas(dtemp, qtd_passada):
         except:
           pass
 
-    else:
-      dtemp[f'Hora_{i}'] = dtemp[f'Hora_{i + 1}']
-      try:
-        dtemp[f'Hora_{i + 1}'] = dtemp[f'Hora_{i + 2}']
-      except:
-        pass
+      else:
+        dtemp[f'Hora_{i}'] = dtemp[f'Hora_{i + 1}']
+        try:
+          dtemp[f'Hora_{i + 1}'] = dtemp[f'Hora_{i + 2}']
+        except:
+          pass
 
-      try:
-        dtemp[f'Hora_{i + 2}'] = dtemp[f'Hora_{i + 3}']
-      except:
-        pass
+        try:
+          dtemp[f'Hora_{i + 2}'] = dtemp[f'Hora_{i + 3}']
+        except:
+          pass
 
-      try:
-        dtemp[f'Hora_{i + 3}'] = dtemp[f'Hora_{i + 4}']
-      except:
-        pass
+        try:
+          dtemp[f'Hora_{i + 3}'] = dtemp[f'Hora_{i + 4}']
+        except:
+          pass
 
   return dtemp
 
