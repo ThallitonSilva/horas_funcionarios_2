@@ -47,62 +47,56 @@ col5, col6 = st.columns((1,1))
 arquivo = col2.file_uploader('Insira o arquivo de horário dos funcionários', accept_multiple_files=False)
 
 if arquivo:
-
-  try:
-
-    horarios = pd.read_table(arquivo, sep='\s+',
+  
+  horarios = pd.read_table(arquivo, sep='\s+',
                                 encoding='utf_16_le', header = 0, names = colunas,
                                 parse_dates = [['Data', 'Hora']], keep_date_col = True)
 
-    horarios['Ano'] = horarios['Data_Hora'].dt.year
-    horarios['Mes'] = horarios['Data_Hora'].dt.month
-    horarios['Dia'] = horarios['Data_Hora'].dt.day
+  horarios['Ano'] = horarios['Data_Hora'].dt.year
+  horarios['Mes'] = horarios['Data_Hora'].dt.month
+  horarios['Dia'] = horarios['Data_Hora'].dt.day
 
-    func = st.selectbox('Escolha o funcionário', options = sorted(horarios['Nome'].unique()))
-
-    tabela = ultimo_mes(horarios, func)
-    tabela_com_dia = coloca_nome_no_dia(tabela)
-    agrupado = agrupa_dias_trabalhados(tabela_com_dia)
-    horario_organizado = organizar_horario(agrupado)
-    horas_calculadas = calcula_horas(horario_organizado)
-    horas_trabalhadas = horas_trabalhadas_mes(horario_organizado)
-    erros_funcionario = agrupa_erros(horario_organizado)
+  func = st.selectbox('Escolha o funcionário', options = sorted(horarios['Nome'].unique()))
+  tabela = ultimo_mes(horarios, func)
+  tabela_com_dia = coloca_nome_no_dia(tabela)
+  agrupado = agrupa_dias_trabalhados(tabela_com_dia)
+  horario_organizado = organizar_horario(agrupado)
+  horas_calculadas = calcula_horas(horario_organizado)
+  horas_trabalhadas = horas_trabalhadas_mes(horario_organizado)
+  erros_funcionario = agrupa_erros(horario_organizado)
 
     #mes = calcula_mes(horas_calculadas)
     #dias = calcula_dias(mes)
     #horas_por_mes = calcula_horas_por_mes(dias)
         
         
-    mes_atual = tabela["Mes"].unique()[0]
+  mes_atual = tabela["Mes"].unique()[0]
 
-    st.markdown(f'## O último mês completo que {func} trabalhou foi {meses[mes_atual]}')
+  st.markdown(f'## O último mês completo que {func} trabalhou foi {meses[mes_atual]}')
 
     #st.markdown(f'#### Neste mês tiveram: \n')
     #for i, j in dias.items():
     #  st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
 
     #st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
-    st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
+  st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
-    try:
-      temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana','Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
-                
-    except:
-      temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1']]
+  try:
+    temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana','Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1', 'Hora_2', 'Hora_3']]
+               
+  except:
+    temp0 = horas_calculadas[['Nome', 'Data', 'Dia_Semana', 'Horas_Trabalhadas', 'Aviso', 'Hora_0', 'Hora_1']]
 
-    st.write(temp0)
-    st.download_button(label='Download da Lista de Horas',
+  st.write(temp0)
+  st.download_button(label='Download da Lista de Horas',
                            data=temp0.to_csv(index=False, na_rep='Sem data'),
                            file_name=f'Lista_Horas_{func}_{meses[mes_atual]}.csv')
 
-    st.markdown(f'#### A quantidade de horas trabalhadas ao longo do mês')
-    st.plotly_chart(figura_horas_trab(horas_calculadas), use_container_width=True)
+  st.markdown(f'#### A quantidade de horas trabalhadas ao longo do mês')
+  st.plotly_chart(figura_horas_trab(horas_calculadas), use_container_width=True)
 
-    st.markdown(f'#### A quantidade de erros, ao usar o relógio de ponto, no mês')
-    st.plotly_chart(figura_erros(erros_funcionario), use_container_width=True)
-
-  except:
-    st.subheader(f'Não há dados, nessa data, para {func}')
+  st.markdown(f'#### A quantidade de erros, ao usar o relógio de ponto, no mês')
+  st.plotly_chart(figura_erros(erros_funcionario), use_container_width=True)
 
 
   st.markdown('---')
