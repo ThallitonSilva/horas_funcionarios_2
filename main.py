@@ -74,11 +74,11 @@ if arquivo:
 
   st.markdown(f'## O último mês completo que {func} trabalhou foi {meses[mes_atual]}')
 
-    #st.markdown(f'#### Neste mês tiveram: \n')
-    #for i, j in dias.items():
-    #  st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
+  st.markdown(f'#### Neste mês tiveram: \n')
+  for i, j in dias.items():
+    st.markdown(f'{j} - {i} - Total: {converte_horas(horas_por_mes[i])}\n')
 
-    #st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
+  st.markdown(f"#### {func} deveria ter trabalhado {converte_horas(horas_por_mes['Total'])} horas neste mês")
   st.markdown(f'#### {func} trabalhou {horas_trabalhadas} neste mês')
 
   try:
