@@ -228,8 +228,8 @@ def agrupa_erros(tabela):
   return tabela.groupby(by=["Aviso"]).size().reset_index(name="Counts")
 
 def calcula_mes(df):
-  inicio_mes = pendulum.parse(str(hras_trab['Data_Hora'][0])).start_of('month')
-  fim_mes = pendulum.parse(str(hras_trab['Data_Hora'][0])).end_of('month')
+  inicio_mes = pendulum.parse(str(df['Data_Hora'][0])).start_of('month')
+  fim_mes = pendulum.parse(str(df['Data_Hora'][0])).end_of('month')
   mes = pendulum.parse(f'{inicio_mes}/{fim_mes}')
 
   return mes 
