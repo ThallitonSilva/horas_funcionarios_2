@@ -225,6 +225,42 @@ def converte_horas(seg):
 def agrupa_erros(tabela):
     return tabela.groupby(by=["Aviso"]).size().reset_index(name="Counts")
 
+def calcula_mes(df):
+  inicio_mes = pendulum.parse(str(hras_trab['Data_Hora'][0])).start_of('month')
+  fim_mes = pendulum.parse(str(hras_trab['Data_Hora'][0])).end_of('month')
+  mes = pendulum.parse(f'{inicio_mes}/{fim_mes}')
+
+  return mes 
+
+def calcula_dias(mes):
+  dias = {'Segunda-feira' : 0, 'Terça-feira': 0, 'Quarta-feira': 0, 'Quinta-feira': 0, 'Sexta-feira': 0, 'Sábado': 0, 'Domingo': 0}
+  for dt in mes.range('days'):
+    dias[dt.format('dddd').capitalize()] += 1
+
+  return dias
+
+def calcula_horas_por_mes(dias):
+  total = 0
+  horas_por_dia = {}
+
+  for i, j in dias.items():
+
+    if i == 'Sábado':
+      horas = (pendulum.duration(hours=4, minutes = 30) * j).in_seconds()
+      total += horas
+
+    elif i == 'Domingo':
+      horas = (pendulum.duration(hours=0) * j).in_seconds()
+
+    else:
+      horas = (pendulum.duration(hours=8) * j).in_seconds()
+      total += horas
+
+    horas_por_dia[i] = horas
+
+  horas_por_dia['Total'] = total
+  
+  return horas_por_dia
 
 def figura_horas_trab(tabela):
     fig = go.Figure()
