@@ -1,6 +1,7 @@
 import pendulum
 import pandas as pd
 import plotly.graph_objects as go
+import json
 
 def ultimo_mes(tabela, nome):
 
@@ -84,6 +85,8 @@ def organizar_horario(tabela):
 
     tabela.fillna('Sem data', inplace=True)
 
+  #display(tabela)
+
   colunas = ['Nome', 'Data_Hora',
              'Dia_Semana', 'Data', 
              'Hora', 'Ano', 'Mes', 
@@ -94,18 +97,14 @@ def organizar_horario(tabela):
   try:
     tabela = tabela[colunas]
 
-  except KeyError as erro1:
-    erro = erro1.args[0].split(']')[0].strip('[').strip("'")
-    colunas.remove(erro)
+  except KeyError as erro:
+    erro = erro.args[0].split(' not')[0].replace("'", '"')
+    err = json.loads(erro)
+    colunas = [col for col in colunas if col not in err]
     try:
       tabela = tabela[colunas]
-    except KeyError as erro2:
-      erro = erro2.args[0].split(']')[0].strip('[').strip("'")
-      colunas.remove(erro)
-      try:
-        tabela = tabela[colunas]
-      except:
-        return 'Deu algum erro, fala com o Thalliton'
+    except:
+      return 'Deu algum erro, fala com o Thalliton'
 
   except:
     return 'Deu algum erro, fala com o Thalliton'
