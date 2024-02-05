@@ -1,7 +1,9 @@
-import pendulum
 import pandas as pd
+import numpy as np
+import pendulum
 import plotly.graph_objects as go
-import json
+import plotly.express as px
+
 
 def ultimo_mes(tabela, nome):
 
@@ -47,69 +49,57 @@ def agrupa_dias_trabalhados(df):
 
 
 def organizar_horario(tabela):
-  tab = []
+    tab = []
 
-  for name, data in tabela:
+    for name, data in tabela:
 
-    dtemp = pd.DataFrame(data)
+        dtemp = pd.DataFrame(data)
 
-    qtd_passada = 0
+        qtd_passada = 0
 
-    for i in dtemp['Data_Hora'].iloc:
+        for i in dtemp['Data_Hora'].iloc:
+            dtemp[f'Hora_{qtd_passada}'] = str(i)
 
-      dtemp[f'Hora_{qtd_passada}'] = str(i)
+            qtd_passada += 1
 
-      qtd_passada += 1
+        dtemp.drop_duplicates(subset=['Data'], inplace=True)
 
-    dtemp.drop_duplicates(subset=['Data'], inplace=True)
+        if dtemp['Dia_Semana'].values[0] != 'Sábado' and qtd_passada < 4:
 
-    if dtemp['Dia_Semana'].values[0] != 'Sábado' and qtd_passada < 4:
+            dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
 
-      dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
+        elif dtemp['Dia_Semana'].values[0] == 'Sábado' and qtd_passada > 2:
 
-    elif dtemp['Dia_Semana'].values[0] == 'Sábado' and qtd_passada > 2:
+            dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
 
-      dtemp['Obs'] = 'Não passou a quantidade de vezes certa'
+        else:
 
-    else:
+            dtemp['Obs'] = 'Ok'
 
-      dtemp['Obs'] = 'Ok'
+        dtemp['Vezes'] = qtd_passada
 
-    dtemp['Vezes'] = qtd_passada
+        horarios_arrumados = arrumar_horas(dtemp, qtd_passada)
 
-    horarios_arrumados = arrumar_horas(dtemp, qtd_passada)
+        tab.append(horarios_arrumados)
 
-    tab.append(horarios_arrumados)
+        tabela = pd.concat(tab).reset_index(drop=True)
 
-    tabela = pd.concat(tab).reset_index(drop=True)
+        tabela.fillna('Sem data', inplace=True)
 
-    tabela.fillna('Sem data', inplace=True)
-
-  #display(tabela)
-
-  colunas = ['Nome', 'Data_Hora',
-             'Dia_Semana', 'Data', 
-             'Hora', 'Ano', 'Mes', 
-             'Dia', 'Hora_0', 
-             'Hora_1', 'Hora_2',
-             'Hora_3', 'Obs', 'Vezes']
-
-  try:
-    tabela = tabela[colunas]
-
-  except KeyError as erro:
-    erro = erro.args[0].split(' not')[0].replace("'", '"')
-    err = json.loads(erro)
-    colunas = [col for col in colunas if col not in err]
     try:
-      tabela = tabela[colunas]
+        tabela = tabela[
+            ['Nome', 'Data_Hora', 'Dia_Semana', 'Data', 'Hora', 'Ano', 'Mes', 'Dia', 'Hora_0', 'Hora_1', 'Hora_2',
+             'Hora_3', 'Obs', 'Vezes']]
+
+    except KeyError:
+        tabela = tabela[
+            ['Nome', 'Data_Hora', 'Dia_Semana', 'Data', 'Hora', 'Ano', 'Mes', 'Dia', 'Hora_0', 'Hora_1', 'Obs',
+             'Vezes']]
+
     except:
-      return 'Deu algum erro, fala com o Thalliton'
+        return 'Deu algum erro, fala com o Thalliton'
 
-  except:
-    return 'Deu algum erro, fala com o Thalliton'
-
-  return tabela
+    return tabela
 
 
 def arrumar_horas(dtemp, qtd_passada):
@@ -118,7 +108,7 @@ def arrumar_horas(dtemp, qtd_passada):
     hora1 = pendulum.parse(dtemp[f'Hora_{i}'].values[0])
     hora2 = pendulum.parse(dtemp[f'Hora_{i + 1}'].values[0])
 
-    if hora1.diff(hora2).in_minutes() < 30:
+    if hora1.diff(hora2).in_minutes() < 15:
 
       if i == 0:
         try:
@@ -164,9 +154,9 @@ def calcula_horas(tabela):
   for i in tabela.iloc:
 
     if i.Vezes == 1:
-      tabela.loc[index, 'Horas'] = passou_uma_vez
-      tabela.loc[index, 'Segundos_trab'] = passou_uma_vez.total_seconds() / 3600
-      tabela.loc[index, 'Horas_Trabalhadas'] = str(passou_uma_vez)
+      tabela.loc[index, 'Horas'] = passou_uma_vez.in_seconds()
+      tabela.loc[index, 'Segundos_trab'] = passou_uma_vez.in_seconds() / 3600
+      tabela.loc[index, 'Horas_Trabalhadas'] = passou_uma_vez.in_words()
       tabela.loc[index, 'Aviso'] = 'Passou somente 1 vez'
 
     if i.Vezes == 2:
@@ -174,44 +164,44 @@ def calcula_horas(tabela):
       if i.Dia_Semana == 'Sábado':
 
         hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
-        tabela.loc[index, 'Horas'] = hora0.as_interval()
-        tabela.loc[index, 'Segundos_trab'] = hora0.total_seconds() / 3600
-        tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval())
+        tabela.loc[index, 'Horas'] = hora0.in_seconds()
+        tabela.loc[index, 'Segundos_trab'] = hora0.in_seconds() / 3600
+        tabela.loc[index, 'Horas_Trabalhadas'] = hora0.in_words()
         tabela.loc[index, 'Aviso'] = 'Ok'
 
       else:
-              
+
         hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
-              
+
         if hora0.in_minutes() < 360:
-                
-          tabela.loc[index, 'Horas'] = hora0.as_interval()
-          tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval()).total_seconds() / 3600
-          tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval())
+
+          tabela.loc[index, 'Horas'] = hora0.in_seconds()
+          tabela.loc[index, 'Segundos_trab'] = (hora0.in_seconds()) / 3600
+          tabela.loc[index, 'Horas_Trabalhadas'] = hora0.in_words()
           tabela.loc[index, 'Aviso'] = 'Trabalhou Meio Periodo / Passou somente 2 vezes'
-                
+
         else:
-                
-          tabela.loc[index, 'Horas'] = hora0.as_interval() - almoco
-          tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval() - almoco).total_seconds() / 3600
-          tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval() - almoco)
+
+          tabela.loc[index, 'Horas'] = (hora0 - almoco).in_seconds()
+          tabela.loc[index, 'Segundos_trab'] = (hora0 - almoco).in_seconds() / 3600
+          tabela.loc[index, 'Horas_Trabalhadas'] = (hora0 - almoco).in_words()
           tabela.loc[index, 'Aviso'] = 'Passou somente 2 vezes'
 
     if i.Vezes == 3:
       hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_2']}")
 
-      tabela.loc[index, 'Horas'] = hora0.as_interval() - almoco
-      tabela.loc[index, 'Segundos_trab'] = (hora0.as_interval() - almoco).total_seconds() / 3600
-      tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0.as_interval() - almoco)
+      tabela.loc[index, 'Horas'] = (hora0 - almoco).in_seconds()
+      tabela.loc[index, 'Segundos_trab'] = (hora0 - almoco).in_seconds() / 3600
+      tabela.loc[index, 'Horas_Trabalhadas'] = (hora0 - almoco).in_words()
       tabela.loc[index, 'Aviso'] = 'Passou somente 3 vezes'
 
     if i.Vezes >= 4:
       hora0 = pendulum.parse(f"{i['Hora_0']}/{i['Hora_1']}")
       hora1 = pendulum.parse(f"{i['Hora_2']}/{i['Hora_3']}")
 
-      tabela.loc[index, 'Horas'] = hora0 + hora1
-      tabela.loc[index, 'Segundos_trab'] = (hora0 + hora1).total_seconds() / 3600
-      tabela.loc[index, 'Horas_Trabalhadas'] = str(hora0 + hora1)
+      tabela.loc[index, 'Horas'] = (hora0 + hora1).in_seconds()
+      tabela.loc[index, 'Segundos_trab'] = (hora0 + hora1).in_seconds() / 3600
+      tabela.loc[index, 'Horas_Trabalhadas'] = (hora0 + hora1).in_words()
       tabela.loc[index, 'Aviso'] = 'Ok'
 
     index += 1
@@ -220,7 +210,7 @@ def calcula_horas(tabela):
 
 
 def horas_trabalhadas_mes(tabela):
-  return converte_horas(tabela['Horas'].sum().total_seconds())
+  return converte_horas(tabela['Horas'].sum())
 
 
 def converte_horas(seg):
@@ -234,12 +224,14 @@ def converte_horas(seg):
 def agrupa_erros(tabela):
   return tabela.groupby(by=["Aviso"]).size().reset_index(name="Counts")
 
+
 def calcula_mes(df):
   inicio_mes = pendulum.parse(str(df['Data_Hora'][0])).start_of('month')
   fim_mes = pendulum.parse(str(df['Data_Hora'][0])).end_of('month')
   mes = pendulum.parse(f'{inicio_mes}/{fim_mes}')
 
-  return mes 
+  return mes
+
 
 def calcula_dias(mes):
   dias = {'Segunda-feira' : 0, 'Terça-feira': 0, 'Quarta-feira': 0, 'Quinta-feira': 0, 'Sexta-feira': 0, 'Sábado': 0, 'Domingo': 0}
@@ -248,6 +240,7 @@ def calcula_dias(mes):
 
   return dias
 
+
 def calcula_horas_por_mes(dias):
   total = 0
   horas_por_dia = {}
@@ -255,7 +248,7 @@ def calcula_horas_por_mes(dias):
   for i, j in dias.items():
 
     if i == 'Sábado':
-      horas = (pendulum.duration(hours=4, minutes = 30) * j).in_seconds()
+      horas = (pendulum.duration(hours=4) * j).in_seconds()
       total += horas
 
     elif i == 'Domingo':
@@ -268,8 +261,9 @@ def calcula_horas_por_mes(dias):
     horas_por_dia[i] = horas
 
   horas_por_dia['Total'] = total
-  
+
   return horas_por_dia
+
 
 def figura_horas_trab(tabela):
   fig = go.Figure()
@@ -341,3 +335,30 @@ def figura_erros(tabela):
   fig.update_yaxes(tickfont=dict(color='black', size=14))
 
   return fig
+
+
+def ultimo_mes(tabela, nome):
+
+  df = tabela[(tabela['Nome'] == nome)].reset_index(drop = True)
+
+  agrupamento = df.groupby(['Ano','Mes'])
+
+  lista_meses = []
+
+  for name, data in agrupamento:
+    lista_meses.append(name)
+
+  lista_meses.sort(reverse=True)
+
+  try:
+    funcionario = tabela[(tabela['Nome'] == nome) & (tabela['Ano'] == lista_meses[0][0]) & (tabela['Mes'] == lista_meses[0][1])].reset_index(drop = True)
+
+  except IndexError:
+    funcionario = tabela[(tabela['Nome'] == nome) & (tabela['Ano'] == lista_meses[1][0]) & (tabela['Mes'] == lista_meses[1][1])].reset_index(drop = True)
+
+  except:
+    return 'Deu algum erro, fala com o Thalliton'
+
+  print(lista_meses)
+
+  return funcionario
